@@ -3,6 +3,7 @@ using PoznajmySie.Models;
 using System.Collections.Generic;
 using AutoMapper;
 using PoznajmySie.DataTransferObjects;
+using System.Linq;
 
 namespace PoznajmySie.Services
 {
@@ -15,27 +16,16 @@ namespace PoznajmySie.Services
             _mapper = mapper;
         }
 
-        public List<PlannedMeetingDto> GetPossibleMeetings(TimeSpan minimumLength, List<CalendarDto> calendarsDto)
+        public List<FreeTimeIntervalDto> GetPossibleTimeSpans(TimeSpan minimumLength, List<CalendarDto> calendarsDto)
         {
-            List<PlannedMeeting> possibleMeetings = new List<PlannedMeeting>();
             List<Calendar> calendars = _mapper.Map<List<CalendarDto>, List<Calendar>>(calendarsDto);
-            Calendar firstCalendar = calendars[0];
 
             if (calendars.Count.Equals(1))
             {
-                return _mapper.Map<List<PlannedMeeting>, List<PlannedMeetingDto>>(firstCalendar.GetFreeTimeIntervals(minimumLength)); 
+                return _mapper.Map<List<FreeTimeInterval>, List<FreeTimeIntervalDto>>(calendars[0].GetFreeTimeIntervals(minimumLength));
             }
 
-            List<PlannedMeeting> firstCalendarMeetings = calendars[0].PlannedMeetings;
-
-            for (int i = 1; i <= calendars.Count; i++)
-            {
-                List<PlannedMeeting> firstCalendarFreeIntervals = calendars[i - 1].GetFreeTimeIntervals(minimumLength);
-            }
-
-            //List<PlannedMeeting> firstCalendarMeetings = calendars[0].PlannedMeetings;
-
-            return _mapper.Map<List<PlannedMeeting>, List<PlannedMeetingDto>>(possibleMeetings);
+            return _mapper.Map<List<FreeTimeInterval>, List<FreeTimeIntervalDto>>(Calendar.CompareMultipleCalendars(calendars, minimumLength));
         }
     }
 }

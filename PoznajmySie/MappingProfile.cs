@@ -18,6 +18,10 @@ namespace PoznajmySie
                 .ForMember(au => au.Start, map => map.MapFrom(vm => vm.Start.ToString(@"hh\:mm")))
                 .ForMember(au => au.End, map => map.MapFrom(vm => vm.End.ToString(@"hh\:mm")));
             CreateMap<PlannedMeetingDto, PlannedMeeting>();
+            CreateMap<FreeTimeIntervalDto, FreeTimeInterval>();
+            CreateMap<FreeTimeInterval, FreeTimeIntervalDto>()
+                .ForMember(au => au.Start, map => map.MapFrom(vm => vm.Start.ToString(@"hh\:mm")))
+                .ForMember(au => au.End, map => map.MapFrom(vm => vm.End.ToString(@"hh\:mm")));
         }
     }
 }

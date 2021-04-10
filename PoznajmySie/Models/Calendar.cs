@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
-using System.ComponentModel.DataAnnotations;
-using PoznajmySie.CustomValidator;
 
 namespace PoznajmySie.Models
 {
@@ -57,19 +54,19 @@ namespace PoznajmySie.Models
             return this.PlannedMeetings.SingleOrDefault(x => x.Id.Equals(id));
         }
 
-        public List<PlannedMeeting> GetFreeTimeIntervals(TimeSpan minimumLength)
+        public List<FreeTimeInterval> GetFreeTimeIntervals(TimeSpan minimumLength)
         {
             List<PlannedMeeting> plannedMeetings = this.PlannedMeetings.OrderBy(x => x.Start).ToList();
-            List<PlannedMeeting> possibleMeetings = new List<PlannedMeeting>();
+            List<FreeTimeInterval> result = new List<FreeTimeInterval>();
 
             if (plannedMeetings.Count.Equals(0))
             {
-                return new List<PlannedMeeting>() { new PlannedMeeting(this.WorkingHours.Start, this.WorkingHours.End) };
+                return new List<FreeTimeInterval>() { new FreeTimeInterval(this.WorkingHours.Start, this.WorkingHours.End) };
             }
 
             if (plannedMeetings.First().Start > this.WorkingHours.Start && plannedMeetings.First().Start.Subtract(this.WorkingHours.Start) >= minimumLength)
             {
-                possibleMeetings.Add(new PlannedMeeting(this.WorkingHours.Start, plannedMeetings.First().Start));
+                result.Add(new FreeTimeInterval(this.WorkingHours.Start, plannedMeetings.First().Start));
             }
 
             if (!plannedMeetings.Count.Equals(1))
@@ -78,7 +75,7 @@ namespace PoznajmySie.Models
                 {
                     if (plannedMeetings[i].Start.Subtract(plannedMeetings[i - 1].End) >= minimumLength)
                     {
-                        possibleMeetings.Add(new PlannedMeeting(plannedMeetings[i - 1].End, plannedMeetings[i].Start));
+                        result.Add(new FreeTimeInterval(plannedMeetings[i - 1].End, plannedMeetings[i].Start));
                     }
                 }
 
@@ -86,11 +83,43 @@ namespace PoznajmySie.Models
 
             if (plannedMeetings.Last().End < this.WorkingHours.End && this.WorkingHours.End.Subtract(plannedMeetings.First().End) >= minimumLength)
             {
-                possibleMeetings.Add(new PlannedMeeting(plannedMeetings.Last().End, this.WorkingHours.End));
+                result.Add(new FreeTimeInterval(plannedMeetings.Last().End, this.WorkingHours.End));
             }
 
+            return result;
+        }
 
-            return possibleMeetings;
+        public List<FreeTimeInterval> GetPossileMeetingTimes(Calendar calendarToCompare, TimeSpan minimumLength)
+        {
+            List<FreeTimeInterval> result = new List<FreeTimeInterval>();
+            List<FreeTimeInterval> freeIntervalsToCompare = calendarToCompare.GetFreeTimeIntervals(minimumLength);
+            List<FreeTimeInterval> freeInvervals = this.GetFreeTimeIntervals(minimumLength);
+
+            foreach (FreeTimeInterval freeSpan in freeInvervals)
+            {
+                FreeTimeInterval overlap = freeIntervalsToCompare.FirstOrDefault(x => x.Start < freeSpan.End && freeSpan.Start < x.End);
+                if(overlap is not null)
+                {
+                    result.Add(new FreeTimeInterval(freeSpan.Start > overlap.Start ? freeSpan.Start : overlap.Start, freeSpan.End < overlap.End ? freeSpan.End : overlap.End));
+                }
+            }
+
+            return result;
+        }
+
+        public static List<FreeTimeInterval> CompareMultipleCalendars(List<Calendar> calendarsToCompare, TimeSpan minimumLength)
+        {
+            List<FreeTimeInterval> result = calendarsToCompare[0].GetPossileMeetingTimes(calendarsToCompare[1], minimumLength);
+            List<FreeTimeInterval> freeIntervalsToCompare = new List<FreeTimeInterval>();
+            List<FreeTimeInterval> freeInvervals = new List<FreeTimeInterval>();
+
+            for (int i = 2; i < calendarsToCompare.Count; i++)
+            {
+                freeIntervalsToCompare = calendarsToCompare[i].GetFreeTimeIntervals(minimumLength);
+                result.RemoveAll(x => !freeIntervalsToCompare.Any(y => x.Start < y.End && y.Start < x.End));
+            }        
+
+            return result;
         }
     }
 }

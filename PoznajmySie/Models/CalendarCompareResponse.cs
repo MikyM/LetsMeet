@@ -1,9 +1,15 @@
 using System.Collections.Generic;
+using PoznajmySie.DataTransferObjects;
 
 namespace PoznajmySie.Models
 {
     public class CalendarCompareResponse
     {
-        List<PlannedMeeting> Meetings { get; set; }
+        public List<FreeTimeIntervalDto> Intervals { get; set; }
+
+        public CalendarCompareResponse(List<FreeTimeIntervalDto> freeTimeIntervals)
+        {
+            this.Intervals = freeTimeIntervals;
+        }
     }
 }
