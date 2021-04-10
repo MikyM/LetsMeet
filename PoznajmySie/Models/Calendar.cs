@@ -81,7 +81,7 @@ namespace PoznajmySie.Models
 
             }
 
-            if (plannedMeetings.Last().End < this.WorkingHours.End && this.WorkingHours.End.Subtract(plannedMeetings.First().End) >= minimumLength)
+            if (plannedMeetings.Last().End < this.WorkingHours.End && this.WorkingHours.End.Subtract(plannedMeetings.Last().End) >= minimumLength)
             {
                 result.Add(new FreeTimeInterval(plannedMeetings.Last().End, this.WorkingHours.End));
             }
@@ -89,7 +89,7 @@ namespace PoznajmySie.Models
             return result;
         }
 
-        public List<FreeTimeInterval> GetPossileMeetingTimes(Calendar calendarToCompare, TimeSpan minimumLength)
+        public List<FreeTimeInterval> CompareWith(Calendar calendarToCompare, TimeSpan minimumLength)
         {
             List<FreeTimeInterval> result = new List<FreeTimeInterval>();
             List<FreeTimeInterval> freeIntervalsToCompare = calendarToCompare.GetFreeTimeIntervals(minimumLength);
@@ -109,14 +109,29 @@ namespace PoznajmySie.Models
 
         public static List<FreeTimeInterval> CompareMultipleCalendars(List<Calendar> calendarsToCompare, TimeSpan minimumLength)
         {
-            List<FreeTimeInterval> result = calendarsToCompare[0].GetPossileMeetingTimes(calendarsToCompare[1], minimumLength);
-            List<FreeTimeInterval> freeIntervalsToCompare = new List<FreeTimeInterval>();
-            List<FreeTimeInterval> freeInvervals = new List<FreeTimeInterval>();
+            List<FreeTimeInterval> result = calendarsToCompare[0].CompareWith(calendarsToCompare[1], minimumLength);
+            List<PlannedMeeting> intervalsToCompare = new List<PlannedMeeting>();
 
             for (int i = 2; i < calendarsToCompare.Count; i++)
             {
-                freeIntervalsToCompare = calendarsToCompare[i].GetFreeTimeIntervals(minimumLength);
-                result.RemoveAll(x => !freeIntervalsToCompare.Any(y => x.Start < y.End && y.Start < x.End));
+                intervalsToCompare = calendarsToCompare[i].PlannedMeetings;
+                //result.RemoveAll(x => !freeIntervalsToCompare.Any(y => x.Start < y.End && y.Start < x.End));
+                foreach(PlannedMeeting interval in intervalsToCompare)
+                {
+                    List<FreeTimeInterval> overlaps = result.Where(x => interval.Start < x.End && x.Start < interval.End).ToList();
+                    foreach(FreeTimeInterval overlap in overlaps)
+                    {
+                        if (overlap is not null && interval.End < overlap.End && overlap.End.Subtract(interval.End) >= minimumLength)
+                        {
+                            overlap.Start = interval.End;
+                            //overlap.End = overlap.End.Add(new TimeSpan(0, 30, 0));
+                        }
+                        else if (overlap is not null)
+                        {
+                            result.Remove(overlap);
+                        }
+                    }
+                }
             }        
 
             return result;
