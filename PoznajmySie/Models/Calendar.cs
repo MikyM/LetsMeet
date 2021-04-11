@@ -111,21 +111,20 @@ namespace PoznajmySie.Models
         {
             List<FreeTimeInterval> result = calendarsToCompare[0].CompareWith(calendarsToCompare[1], minimumLength);
             List<FreeTimeInterval> intervalsToCompare = new List<FreeTimeInterval>();
+            List<FreeTimeInterval> overlaps = new List<FreeTimeInterval>();
 
             for (int i = 2; i < calendarsToCompare.Count; i++)
             {
                 intervalsToCompare = calendarsToCompare[i].GetFreeTimeIntervals(minimumLength);
                 if(intervalsToCompare.Count.Equals(0))
                 {
-                    result.Clear();
+                    return new List<FreeTimeInterval>();
                 }
-
-                //result.RemoveAll(x => !intervalsToCompare.Any(y => x.Start <= y.End && y.Start <= x.End));
 
                 foreach (FreeTimeInterval interval in intervalsToCompare)
                 {
                     
-                    List<FreeTimeInterval> overlaps = result.Where(x => interval.Start < x.End && x.Start < interval.End).ToList();
+                    overlaps = result.Where(x => interval.Start < x.End && x.Start < interval.End).ToList();
                     bool isEndOverlapping = false;
                     bool isFullyOverlapping = false;
                     bool isStartOverlapping = false;
