@@ -26,6 +26,7 @@ namespace PoznajmySie
         {
             services.AddAutoMapper(typeof(Startup));
             services.ConfigureDI();
+            services.ConfigureLoggerService();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -42,6 +43,7 @@ namespace PoznajmySie
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PoznajmySie v1"));
             }
+            app.ConfigureCustomExceptionMiddleware();
 
             app.UseHttpsRedirection();
 
