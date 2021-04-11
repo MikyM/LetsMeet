@@ -8,6 +8,7 @@ namespace PoznajmySie.DataTransferObjects
     {
         [Required]
         [TimeSpan(ErrorMessage = "This is not a valid TimeSpan value")]
+        [TimeSpanLessThan("End")]
         public string Start { get; set; }
         [TimeSpan(ErrorMessage = "This is not a valid TimeSpan value")]
         public string End { get; set; }

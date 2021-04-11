@@ -11,6 +11,7 @@ namespace PoznajmySie.DataTransferObjects
         public Guid Id { get; set; }
         [Required]
         [TimeSpan(ErrorMessage = "This is not a valid TimeSpan value")]
+        [TimeSpanLessThan("End")]
         public string Start { get; set; }
         [Required]
         [TimeSpan(ErrorMessage = "This is not a valid TimeSpan value")]

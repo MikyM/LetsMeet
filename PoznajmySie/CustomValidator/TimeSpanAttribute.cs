@@ -8,14 +8,20 @@ namespace PoznajmySie.CustomValidator
     {
         public TimeSpanAttribute() { }
 
-        public override bool IsValid(object value)
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
+            ErrorMessage = ErrorMessageString;
+
             string strValue = value as string;
             if (!string.IsNullOrEmpty(strValue))
             {
-                return TimeSpan.TryParse(strValue, out TimeSpan result);
+                if(!TimeSpan.TryParse(strValue, out TimeSpan result) || result.TotalHours > 24 || result.TotalHours < 0)
+                {
+                    return new ValidationResult(ErrorMessage);
+                }
             }
-            return true;
+
+            return ValidationResult.Success;
         }
     }
 }

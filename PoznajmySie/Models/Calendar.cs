@@ -16,17 +16,38 @@ namespace PoznajmySie.Models
         }
         public Calendar(TimeSpan workStart, TimeSpan workEnd, List<PlannedMeeting> plannedMeetings)
         {
+            if(plannedMeetings is null)
+            {
+                throw new ArgumentNullException("plannedMeetings");
+            }
+
             this.SetWorkingHours(workStart, workEnd);
             this.SetMeetings(plannedMeetings);
         }
 
         public void SetWorkingHours(TimeSpan workStart, TimeSpan workEnd)
         {
+            if(workStart >= workEnd)
+            {
+                throw new ArgumentException("workEnd must be greater than workStart");
+            }
+            else if (workStart.TotalHours > 24 || workEnd.TotalHours > 24)
+            {
+                throw new ArgumentException("Spans can't be greater than 24 hours");
+            }
+            else if (workStart.TotalHours < 0 || workEnd.TotalHours < 0)
+            {
+                throw new ArgumentException("Spans can't be negative");
+            }
             this.WorkingHours = new WorkingHours(workStart, workEnd);
         }
 
         public void SetMeetings(List<PlannedMeeting> plannedMeetings)
         {
+            if (plannedMeetings is null)
+            {
+                throw new ArgumentNullException("plannedMeetings");
+            }
             this.PlannedMeetings = plannedMeetings;
         }
 
@@ -109,6 +130,15 @@ namespace PoznajmySie.Models
 
         public static List<FreeTimeInterval> CompareMultipleCalendars(List<Calendar> calendarsToCompare, TimeSpan minimumLength)
         {
+            if(calendarsToCompare.Count.Equals(0) || calendarsToCompare is null)
+            {
+                return new List<FreeTimeInterval>();
+            }
+            else if (calendarsToCompare.Count.Equals(1))
+            {
+                return calendarsToCompare.First().GetFreeTimeIntervals(minimumLength);
+            }
+
             List<FreeTimeInterval> result = calendarsToCompare[0].CompareWith(calendarsToCompare[1], minimumLength);
             List<FreeTimeInterval> intervalsToCompare = new List<FreeTimeInterval>();
             List<FreeTimeInterval> overlaps = new List<FreeTimeInterval>();
