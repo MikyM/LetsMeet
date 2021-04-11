@@ -27,11 +27,6 @@ namespace PoznajmySie.Controllers
         [HttpPost("GetPossibleTimeSpans")]
         public async Task<IActionResult> GetPossibleTimeSpans([FromBody] CalendarCompareRequest request)
         {
-            PlannedMeeting c = null;
-            List <PlannedMeeting> b = null ;
-            Calendar a = new Calendar();
-            a.AddMeeting(c);
-            a.SetMeetings(b);
             return Ok(new CalendarCompareResponse(_service.GetPossibleTimeSpans(TimeSpan.Parse(request.MeetingDuration), request.Calendars)));
         }
     }
