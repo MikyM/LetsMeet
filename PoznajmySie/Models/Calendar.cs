@@ -16,11 +16,6 @@ namespace PoznajmySie.Models
         }
         public Calendar(TimeSpan workStart, TimeSpan workEnd, List<PlannedMeeting> plannedMeetings)
         {
-            if(plannedMeetings is null)
-            {
-                throw new ArgumentNullException("plannedMeetings");
-            }
-
             this.SetWorkingHours(workStart, workEnd);
             this.SetMeetings(plannedMeetings);
         }
@@ -58,6 +53,10 @@ namespace PoznajmySie.Models
 
         public void AddMeeting(PlannedMeeting meeting)
         {
+            if(meeting is null)
+            {
+                throw new ArgumentNullException("meeting");
+            }
             this.PlannedMeetings.Add(meeting);
         }
         
@@ -77,6 +76,11 @@ namespace PoznajmySie.Models
 
         public List<FreeTimeInterval> GetFreeTimeIntervals(TimeSpan minimumLength)
         {
+            if (minimumLength.TotalHours >= 24 || minimumLength.TotalHours <= 0)
+            {
+                throw new ArgumentException("Minimum length value must be greater than 0 and smaller than 24");
+            }
+
             List<PlannedMeeting> plannedMeetings = this.PlannedMeetings.OrderBy(x => x.Start).ToList();
             List<FreeTimeInterval> result = new List<FreeTimeInterval>();
 
@@ -112,6 +116,15 @@ namespace PoznajmySie.Models
 
         public List<FreeTimeInterval> CompareWith(Calendar calendarToCompare, TimeSpan minimumLength)
         {
+            if (calendarToCompare is null)
+            {
+                throw new ArgumentNullException("calendarsToCompare");
+            }
+            if (minimumLength.TotalHours >= 24 || minimumLength.TotalHours <= 0)
+            {
+                throw new ArgumentException("Minimum length value must be greater than 0 and smaller than 24");
+            }
+
             List<FreeTimeInterval> result = new List<FreeTimeInterval>();
             List<FreeTimeInterval> freeIntervalsToCompare = calendarToCompare.GetFreeTimeIntervals(minimumLength);
             List<FreeTimeInterval> freeInvervals = this.GetFreeTimeIntervals(minimumLength);
@@ -130,13 +143,17 @@ namespace PoznajmySie.Models
 
         public static List<FreeTimeInterval> CompareMultipleCalendars(List<Calendar> calendarsToCompare, TimeSpan minimumLength)
         {
-            if(calendarsToCompare.Count.Equals(0) || calendarsToCompare is null)
+            if(calendarsToCompare is null)
             {
-                return new List<FreeTimeInterval>();
+                throw new ArgumentNullException("calendarsToCompare");
             }
-            else if (calendarsToCompare.Count.Equals(1))
+            if(minimumLength.TotalHours >= 24 || minimumLength.TotalHours <= 0)
             {
-                return calendarsToCompare.First().GetFreeTimeIntervals(minimumLength);
+                throw new ArgumentException("Minimum length value must be greater than 0 and smaller than 24");
+            }
+            if(calendarsToCompare.Count < 2)
+            {
+                throw new ArgumentException("Supplied calendar list has less than 2 items");
             }
 
             List<FreeTimeInterval> result = calendarsToCompare[0].CompareWith(calendarsToCompare[1], minimumLength);

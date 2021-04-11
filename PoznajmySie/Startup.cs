@@ -9,6 +9,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
 using PoznajmySie.Extensions;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using NLog;
+using System;
+using System.IO;
 
 namespace PoznajmySie
 {
@@ -16,6 +20,7 @@ namespace PoznajmySie
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             Configuration = configuration;
         }
 
@@ -27,7 +32,9 @@ namespace PoznajmySie
             services.AddAutoMapper(typeof(Startup));
             services.ConfigureDI();
             services.ConfigureLoggerService();
-            services.AddControllers();
+            services.AddControllers(options => {
+                options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PoznajmySie", Version = "v1" });
