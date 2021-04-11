@@ -3,11 +3,11 @@ using PoznajmySie.DataTransferObjects;
 
 namespace PoznajmySie.Models
 {
-    public class CalendarCompareResponse
+    public class GetFreeIntervalsResponse
     {
         public List<FreeTimeIntervalDto> Intervals { get; set; }
 
-        public CalendarCompareResponse(List<FreeTimeIntervalDto> freeTimeIntervals)
+        public GetFreeIntervalsResponse(List<FreeTimeIntervalDto> freeTimeIntervals)
         {
             this.Intervals = freeTimeIntervals;
         }

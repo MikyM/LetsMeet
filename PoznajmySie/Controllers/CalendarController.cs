@@ -24,10 +24,10 @@ namespace PoznajmySie.Controllers
             _service = service;
         }
 
-        [HttpPost("GetPossibleTimeSpans")]
-        public async Task<IActionResult> GetPossibleTimeSpans([FromBody] CalendarCompareRequest request)
+        [HttpPost("getfreeintervals")]
+        public IActionResult GetFreeIntervals([FromBody] GetFreeIntervalsRequest request)
         {
-            return Ok(new CalendarCompareResponse(_service.GetPossibleTimeSpans(TimeSpan.Parse(request.MeetingDuration), request.Calendars)));
+            return Ok(new GetFreeIntervalsResponse(_service.GetFreeTimeIntervals(TimeSpan.Parse(request.MeetingDuration), request.Calendars)));
         }
     }
 }

@@ -12,7 +12,7 @@ namespace PoznajmySie.DataTransferObjects
         public Guid Id { get; set; }
         [Required, ValidateObject]
         public WorkingHoursDto WorkingHours { get; set; }
-        [ValidateObject]
+        [WithinWorkingHours("WorkingHours"), ValidateObject]
         public List<PlannedMeetingDto> PlannedMeetings { get; set; }
     }
 }

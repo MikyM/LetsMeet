@@ -16,7 +16,7 @@ namespace PoznajmySie.Services
             _mapper = mapper;
         }
 
-        public List<FreeTimeIntervalDto> GetPossibleTimeSpans(TimeSpan minimumLength, List<CalendarDto> calendarsDto)
+        public List<FreeTimeIntervalDto> GetFreeTimeIntervals(TimeSpan minimumLength, List<CalendarDto> calendarsDto)
         {
             List<Calendar> calendars = _mapper.Map<List<CalendarDto>, List<Calendar>>(calendarsDto);
 

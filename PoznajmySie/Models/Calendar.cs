@@ -128,13 +128,20 @@ namespace PoznajmySie.Models
             List<FreeTimeInterval> result = new List<FreeTimeInterval>();
             List<FreeTimeInterval> freeIntervalsToCompare = calendarToCompare.GetFreeTimeIntervals(minimumLength);
             List<FreeTimeInterval> freeInvervals = this.GetFreeTimeIntervals(minimumLength);
+            TimeSpan start = new TimeSpan();
+            TimeSpan end = new TimeSpan();
 
             foreach (FreeTimeInterval freeSpan in freeInvervals)
             {
                 FreeTimeInterval overlap = freeIntervalsToCompare.FirstOrDefault(x => x.Start < freeSpan.End && freeSpan.Start < x.End);
                 if(overlap is not null)
                 {
-                    result.Add(new FreeTimeInterval(freeSpan.Start > overlap.Start ? freeSpan.Start : overlap.Start, freeSpan.End < overlap.End ? freeSpan.End : overlap.End));
+                    start = freeSpan.Start > overlap.Start ? freeSpan.Start : overlap.Start;
+                    end = freeSpan.End < overlap.End ? freeSpan.End : overlap.End;
+                    if(end.Subtract(start) >= new TimeSpan(0, 30, 0))
+                    {
+                        result.Add(new FreeTimeInterval(start, end));
+                    }                
                 }
             }
 

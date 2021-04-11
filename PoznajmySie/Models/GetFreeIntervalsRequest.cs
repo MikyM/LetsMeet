@@ -5,7 +5,7 @@ using PoznajmySie.CustomValidator;
 
 namespace PoznajmySie.Models
 {
-    public class CalendarCompareRequest
+    public class GetFreeIntervalsRequest
     {
         [Required]
         [TimeSpan(ErrorMessage = "This is not a valid TimeSpan value")]

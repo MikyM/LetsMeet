@@ -6,6 +6,6 @@ namespace PoznajmySie.Services
 {
     public interface ICalendarService
     {
-        public List<FreeTimeIntervalDto> GetPossibleTimeSpans(TimeSpan minimumLength, List<CalendarDto> calendarsDto);
+        public List<FreeTimeIntervalDto> GetFreeTimeIntervals(TimeSpan minimumLength, List<CalendarDto> calendarsDto);
     }
 }
