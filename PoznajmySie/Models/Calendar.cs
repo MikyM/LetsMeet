@@ -110,30 +110,70 @@ namespace PoznajmySie.Models
         public static List<FreeTimeInterval> CompareMultipleCalendars(List<Calendar> calendarsToCompare, TimeSpan minimumLength)
         {
             List<FreeTimeInterval> result = calendarsToCompare[0].CompareWith(calendarsToCompare[1], minimumLength);
-            List<PlannedMeeting> intervalsToCompare = new List<PlannedMeeting>();
+            List<FreeTimeInterval> intervalsToCompare = new List<FreeTimeInterval>();
 
             for (int i = 2; i < calendarsToCompare.Count; i++)
             {
-                intervalsToCompare = calendarsToCompare[i].PlannedMeetings;
-                //result.RemoveAll(x => !freeIntervalsToCompare.Any(y => x.Start < y.End && y.Start < x.End));
-                foreach(PlannedMeeting interval in intervalsToCompare)
+                intervalsToCompare = calendarsToCompare[i].GetFreeTimeIntervals(minimumLength);
+                if(intervalsToCompare.Count.Equals(0))
                 {
+                    result.Clear();
+                }
+
+                //result.RemoveAll(x => !intervalsToCompare.Any(y => x.Start <= y.End && y.Start <= x.End));
+
+                foreach (FreeTimeInterval interval in intervalsToCompare)
+                {
+                    
                     List<FreeTimeInterval> overlaps = result.Where(x => interval.Start < x.End && x.Start < interval.End).ToList();
-                    foreach(FreeTimeInterval overlap in overlaps)
+                    bool isEndOverlapping = false;
+                    bool isFullyOverlapping = false;
+                    bool isStartOverlapping = false;
+
+                    foreach (FreeTimeInterval overlap in overlaps)                   
                     {
-                        if (overlap is not null && interval.End < overlap.End && overlap.End.Subtract(interval.End) >= minimumLength)
+                        isEndOverlapping = interval.Start < overlap.Start && interval.End < overlap.End;
+                        isFullyOverlapping = interval.Start > overlap.Start && interval.End < overlap.End;
+                        isStartOverlapping = interval.Start > overlap.Start && interval.End > overlap.End;
+
+                        if (isEndOverlapping)
                         {
-                            overlap.Start = interval.End;
-                            //overlap.End = overlap.End.Add(new TimeSpan(0, 30, 0));
+                            if(interval.End.Subtract(overlap.Start) >= minimumLength)
+                            {
+                                overlap.End = interval.End;
+                            }
+                            else
+                            {
+                                result.Remove(overlap);
+                            }                       
                         }
-                        else if (overlap is not null)
+                        else if (isFullyOverlapping)
                         {
-                            result.Remove(overlap);
+                            if (interval.End.Subtract(interval.Start) >= minimumLength)
+                            {
+                                overlap.Start = interval.Start;
+                                overlap.End = interval.End;
+                            }
+                            else
+                            {
+                                result.Remove(overlap);
+                            }
+                        }
+                        else if (isStartOverlapping)
+                        {
+                            if (overlap.End.Subtract(interval.Start) >= minimumLength)
+                            {
+                                overlap.Start = interval.Start;
+                            }
+                            else
+                            {
+                                result.Remove(overlap);
+                            }                          
                         }
                     }
                 }
+                result.RemoveAll(x => !intervalsToCompare.Any(y => y.Start <= x.End && x.Start <= y.End));
             }        
-
             return result;
         }
     }
