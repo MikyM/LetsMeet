@@ -10,8 +10,7 @@ namespace PoznajmySie.Extensions
     {
         public static void ConfigureIISIntegration(this IServiceCollection services)
         {
-            services.Configure<IISOptions>(options =>
-            {
+            services.Configure<IISOptions>(options => {
             });
         }
 

@@ -16,25 +16,21 @@ namespace PoznajmySie.CustomValidator
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             ErrorMessage = ErrorMessageString;
-            if(!TimeSpan.TryParse(value as string, out TimeSpan currentValue))
-            {
+            if (!TimeSpan.TryParse(value as string, out TimeSpan currentValue)) {
                 return ValidationResult.Success;
             }
 
             var property = validationContext.ObjectType.GetProperty(_comparisonProperty);
 
-            if (property == null)
-            {
+            if (property == null) {
                 throw new ArgumentException("Property with this name was not found");
             }
 
-            if (!TimeSpan.TryParse(property.GetValue(validationContext.ObjectInstance) as string, out TimeSpan comparisonValue))
-            {
+            if (!TimeSpan.TryParse(property.GetValue(validationContext.ObjectInstance) as string, out TimeSpan comparisonValue)) {
                 return ValidationResult.Success;
             }
 
-            if (currentValue >= comparisonValue)
-            {
+            if (currentValue >= comparisonValue) {
                 return new ValidationResult("End value must be greater than Start value");
             }
             return ValidationResult.Success;

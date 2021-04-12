@@ -19,12 +19,9 @@ namespace PoznajmySie.ExceptionMiddleware
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            try
-            {
+            try {
                 await _next(httpContext);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _logger.LogError($"Something went wrong: {ex}");
                 await HandleExceptionAsync(httpContext, ex);
             }
@@ -33,8 +30,7 @@ namespace PoznajmySie.ExceptionMiddleware
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            return context.Response.WriteAsync(new ErrorDetails()
-            {
+            return context.Response.WriteAsync(new ErrorDetails() {
                 StatusCode = context.Response.StatusCode,
                 Message = "Internal Server Error"
             }.ToString());

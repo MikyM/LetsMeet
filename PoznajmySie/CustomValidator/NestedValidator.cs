@@ -19,31 +19,25 @@ namespace PoznajmySie.CustomValidator
 
             var properties = obj.GetType().GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(ValidateObjectAttribute)));
 
-            foreach (var property in properties)
-            {
+            foreach (var property in properties) {
                 var valAttrib = property.GetCustomAttributes(typeof(ValidateObjectAttribute), true).FirstOrDefault() as ValidateObjectAttribute;
                 var value = obj.GetPropertyValue(property.Name);
 
                 if (value == null || valAttrib == null) continue;
 
                 var asEnumerable = value as IEnumerable;
-                if (asEnumerable != null)
-                {
+                if (asEnumerable != null) {
                     List<object> items = new List<object>();
                     foreach (var enumObj in asEnumerable) items.Add(enumObj);
-                    foreach (var enumObj in items)
-                    {
+                    foreach (var enumObj in items) {
                         result = TryValidateObjectRecursive(enumObj, results) && result;
                     }
-                    if (items.Count < valAttrib.MinOccursOnEnumerable)
-                    {
+                    if (items.Count < valAttrib.MinOccursOnEnumerable) {
                         string errorMessage = valAttrib.ErrorMessage ?? "MinOccursOnEnumerable validation failed.";
                         results.Add(new ValidationResult(errorMessage));
                         result = false;
                     }
-                }
-                else
-                {
+                } else {
                     result = TryValidateObjectRecursive(value, results) && result;
                 }
             }
@@ -59,8 +53,7 @@ namespace PoznajmySie.CustomValidator
             object objValue = string.Empty;
 
             var propertyInfo = o.GetType().GetProperty(propertyName);
-            if (propertyInfo != null)
-            {
+            if (propertyInfo != null) {
                 objValue = propertyInfo.GetValue(o, null);
             }
             return objValue;

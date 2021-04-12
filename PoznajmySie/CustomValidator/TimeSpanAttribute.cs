@@ -13,10 +13,8 @@ namespace PoznajmySie.CustomValidator
             ErrorMessage = ErrorMessageString;
 
             string strValue = value as string;
-            if (!string.IsNullOrEmpty(strValue))
-            {
-                if(!TimeSpan.TryParse(strValue, out TimeSpan result) || result.TotalHours > 24 || result.TotalHours < 0)
-                {
+            if (!string.IsNullOrEmpty(strValue)) {
+                if (!TimeSpan.TryParse(strValue, out TimeSpan result) || result.TotalHours > 24 || result.TotalHours < 0) {
                     return new ValidationResult(ErrorMessage);
                 }
             }
