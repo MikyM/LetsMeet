@@ -1,6 +1,4 @@
 using System;
-using System.Text.Json.Serialization;
-using System.ComponentModel.DataAnnotations;
 
 namespace PoznajmySie.Models
 {

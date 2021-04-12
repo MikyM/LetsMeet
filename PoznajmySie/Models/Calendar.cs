@@ -16,8 +16,9 @@ namespace PoznajmySie.Models
         }
         public Calendar(TimeSpan workStart, TimeSpan workEnd, List<PlannedMeeting> plannedMeetings)
         {
-            this.SetWorkingHours(workStart, workEnd);
-            this.SetMeetings(plannedMeetings);
+
+            this.WorkingHours = new WorkingHours(workStart, workEnd);
+            this.PlannedMeetings = plannedMeetings;
         }
 
         public void SetWorkingHours(TimeSpan workStart, TimeSpan workEnd)
@@ -89,7 +90,6 @@ namespace PoznajmySie.Models
                         result.Add(new FreeTimeInterval(plannedMeetings[i - 1].End, plannedMeetings[i].Start));
                     }
                 }
-
             }
 
             if (plannedMeetings.Last().End < this.WorkingHours.End && this.WorkingHours.End.Subtract(plannedMeetings.Last().End) >= meetingDuration) {
@@ -116,7 +116,6 @@ namespace PoznajmySie.Models
             Calendar dummyCalendar = new Calendar();
             List<PlannedMeeting> dummyMeetings = new List<PlannedMeeting>();
             List<PlannedMeeting> helpList = new List<PlannedMeeting>();
-            List<PlannedMeeting> overlapList = new List<PlannedMeeting>();
 
             calendarsToCompare.ForEach(x => {
                 if (x.WorkingHours.Start > start) {

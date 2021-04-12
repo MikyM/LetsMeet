@@ -6,7 +6,6 @@ namespace PoznajmySie.CustomValidator
     public class ValidateObjectAttribute : Attribute
     {
         int _minOccurs = 0;
-        //marker for object properties that need to be recursively validated
 
         public ValidateObjectAttribute() { }
 

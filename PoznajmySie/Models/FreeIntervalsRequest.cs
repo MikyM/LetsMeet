@@ -5,7 +5,7 @@ using PoznajmySie.CustomValidator;
 
 namespace PoznajmySie.Models
 {
-    public class GetFreeIntervalsRequest
+    public class FreeIntervalsRequest
     {
         [Required]
         [TimeSpan(ErrorMessage = "This is not a valid TimeSpan value")]
