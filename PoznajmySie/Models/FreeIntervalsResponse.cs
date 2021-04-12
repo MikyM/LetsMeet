@@ -5,11 +5,11 @@ namespace PoznajmySie.Models
 {
     public class FreeIntervalsResponse
     {
-        public List<FreeTimeIntervalDto> Intervals { get; set; }
+        public List<FreeTimeIntervalDto> FreeIntervals { get; set; }
 
         public FreeIntervalsResponse(List<FreeTimeIntervalDto> freeTimeIntervals)
         {
-            this.Intervals = freeTimeIntervals;
+            this.FreeIntervals = freeTimeIntervals;
         }
     }
 }
