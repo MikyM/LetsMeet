@@ -101,6 +101,16 @@ namespace PoznajmySie.Models
 
         public static List<FreeTimeInterval> CompareMultipleCalendars(List<Calendar> calendarsToCompare, TimeSpan meetingDuration)
         {
+            if (meetingDuration.TotalHours >= 24 || meetingDuration.TotalHours <= 0) {
+                throw new ArgumentException("Minimum length value must be greater than 0 and smaller than 24");
+            }
+            if (calendarsToCompare is null) {
+                throw new ArgumentNullException("calendarsToCompare");
+            }
+            if (calendarsToCompare.Count.Equals(0)) {
+                throw new ArgumentException("At least one calendar must be supplied");
+            }
+
             TimeSpan start = new TimeSpan(0, 0, 0);
             TimeSpan end = new TimeSpan(23, 59, 59);
             Calendar dummyCalendar = new Calendar();
