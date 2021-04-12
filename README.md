@@ -1,4 +1,4 @@
-# PoznajmySie
+# SpotkajmySie
 
 Simple Web API project showcasing a multiple calendar comparison method returning free time intervals in which a meeting of required duration can be held.
 
